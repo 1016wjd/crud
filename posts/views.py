@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Post 모델을 import
 from .models import Post
@@ -11,5 +11,36 @@ def index(request):
         'posts': posts,
     }
 
+    
     return render(request, 'index.html', context)
 
+def detail(request, id):
+    post = Post.objects.get(id=id)
+
+    context = {
+        'post': post,
+    }
+    return render(request, 'detail.html', context)
+
+
+def new(request):
+    return render(request,'new.html')
+
+
+def create(request):
+    title = request.GET.get('title')
+    content = request.GET.get('content')
+
+    post = Post()
+    post.title = title
+    post.content = content
+    post.save()
+
+    return redirect(f'/posts/{post.id}/')
+
+
+def delete(request, id):
+    post = Post.objects.get(id=id) 
+    post.delete()
+
+    return redirect(f'/index/')
